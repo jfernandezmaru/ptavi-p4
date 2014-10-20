@@ -8,7 +8,7 @@ en UDP simple
 import SocketServer
 import sys
 
-class EchoHandler(SocketServer.DatagramRequestHandler):
+class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
     """
     Echo server class
     """
@@ -20,13 +20,21 @@ class EchoHandler(SocketServer.DatagramRequestHandler):
         while 1:
             # Leyendo línea a línea lo que nos envía el cliente
             line = self.rfile.read()
-            print "El cliente nos manda " + line
+            print(line)
+            if line[0:8] == 'REGISTER':
+
+                Dic_clients[self.client_address(1)]= self.client_address(2)
+                print ("Cliente Registrado")
+     
             if not line:
                 break
+
+            print "El cliente nos manda " + line
 
 if __name__ == "__main__":
     # Creamos servidor de eco y escuchamos
     PORT = int(sys.argv[1])
-    serv = SocketServer.UDPServer(("", PORT), EchoHandler)
+    Dic_clients ={}
+    serv = SocketServer.UDPServer(("", PORT), SIPRegisterHandler)
     print "Lanzando servidor UDP de eco..."
     serv.serve_forever()
