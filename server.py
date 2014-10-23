@@ -19,19 +19,28 @@ class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
 
         while 1:
             # Leyendo línea a línea lo que nos envía el cliente
-            #print("envio ------> " + str(line[0]))
             line = self.rfile.read()
             lista= line.split(" ")
-
-            if lista[0] == 'REGISTER':
-
-                Nick = lista[1].split(":")
-                Dic_clients[Nick[1]]= self.client_address[0]
-                print ("Cliente Registrado")
-                print 'El cliente nos manda: ' + line
-                self.wfile.write("SIP/2.0 200 OK" + '\r\n')
-            if not line:
             
+            if line != "":
+            
+                Nick = lista[1].split(":")
+
+                if lista[0] == 'REGISTER':
+
+                    Dic_clients[Nick[1]]= self.client_address[0]
+                    print ("Cliente Registrado: (" + str(self.client_address[0]) + " , " + str(self.client_address[1]) + ")")
+                    print 'El cliente nos manda: ' + line
+                    self.wfile.write("SIP/2.0 200 OK" + '\r\n')
+                    
+                if lista[2] == "0":
+
+                    print ("Cliente dado de baja: (" + str(self.client_address[0]) + " , " + str(self.client_address[1]) + ")")  
+                    del Dic_clients[Nick[1]]
+                    self.wfile.write("SIP/2.0 200 OK" + '\r\n')
+                
+            if not line:
+
                 break
 
 if __name__ == "__main__":

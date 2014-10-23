@@ -13,9 +13,10 @@ import sys
 #SERVER = 'localhost'
 SERVER = sys.argv[1]
 PORT = int(sys.argv[2])
+REGISTER= sys.argv[3].upper()
+EXPIRES = int(sys.argv[5])
 
 # Contenido que vamos a enviar
-REGISTER= sys.argv[3].upper()
 LINE = sys.argv[4:]
 LINE = " ".join(LINE)
 
