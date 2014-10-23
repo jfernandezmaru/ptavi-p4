@@ -7,12 +7,33 @@ en UDP simple
 
 import SocketServer
 import sys
+import time
 
 class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
     """
     Echo server class
     """
 
+    def register2file (self, client, port, register):
+
+        fich = open("registered.txt", "r+")
+        if register:
+        
+            fich.write("User" + "\t" + "IP" + "\t" + "Expires" + "\n")
+            expires= time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))
+            fich.write(client + "\t" + port + "\t" + expires + "\n")
+        else:
+
+            lines = fich.readlines()
+            for line in lines:
+
+                linea= line.split("\t")
+                print linea
+                if linea[0] == client:
+                
+                   print "entontrado!!!!!!!!!!!!!!!!!!"
+                   line = line.replace(line[0:], '')
+            
     def handle(self):
         # Escribe dirección y puerto del cliente (de tupla client_address)
         self.wfile.write("Hemos recibido tu peticion" + '\r\n')
@@ -32,13 +53,14 @@ class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
                     print ("Cliente Registrado: (" + str(self.client_address[0]) + " , " + str(self.client_address[1]) + ")")
                     print 'El cliente nos manda: ' + line
                     self.wfile.write("SIP/2.0 200 OK" + '\r\n')
+                    self.register2file(str(Nick[1]),str(self.client_address[0]),1)
                     
                 if lista[2] == "0":
 
                     print ("Cliente dado de baja: (" + str(self.client_address[0]) + " , " + str(self.client_address[1]) + ")")  
                     del Dic_clients[Nick[1]]
                     self.wfile.write("SIP/2.0 200 OK" + '\r\n')
-                
+                    self.register2file(str(Nick[1]),str(self.client_address[0]),0)              
             if not line:
 
                 break
@@ -51,3 +73,4 @@ if __name__ == "__main__":
     serv = SocketServer.UDPServer(("", PORT), SIPRegisterHandler)
     print "Lanzando servidor UDP de eco..."
     serv.serve_forever()
+
