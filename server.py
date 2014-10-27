@@ -41,7 +41,7 @@ class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
         actuar en funcion de su contenido
         """
         # Escribe dirección y puerto del cliente (de tupla client_address)
-        self.wfile.write("Hemos recibido tu peticion" + '\r\n')
+        self.wfile.write("SIP/2.0 200 OK" + '\r\n')
         while 1:
             # Leemos línea a línea lo que nos envía el cliente y
             # lo separamos por espacios
