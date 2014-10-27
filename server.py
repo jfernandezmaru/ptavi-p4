@@ -14,25 +14,12 @@ class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
     Echo server class
     """
 
-    def register2file (self, client, port, register):
+    def register2file (self, client, IP,expire,dictionary):
 
         fich = open("registered.txt", "r+")
-        if register:
-        
-            fich.write("User" + "\t" + "IP" + "\t" + "Expires" + "\n")
-            expires= time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))
-            fich.write(client + "\t" + port + "\t" + expires + "\n")
-        else:
-
-            lines = fich.readlines()
-            for line in lines:
-
-                linea= line.split("\t")
-                print linea
-                if linea[0] == client:
-                
-                   print "entontrado!!!!!!!!!!!!!!!!!!"
-                   line = line.replace(line[0:], '')
+        fich.write("User" + "\t" + "IP" + "\t" + "Expires" + "\n")
+        expires= time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(expire))
+        fich.write(client + "\t" + IP + "\t" + expires + "\n")
             
     def handle(self):
         # Escribe dirección y puerto del cliente (de tupla client_address)
@@ -46,21 +33,35 @@ class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
             if line != "":
             
                 Nick = lista[1].split(":")
-
+                expire= time.time() + int(lista[2])
+                Dic_clients[Nick[1]]= (self.client_address[0], expire)
+                
                 if lista[0] == 'REGISTER':
 
-                    Dic_clients[Nick[1]]= self.client_address[0]
                     print ("Cliente Registrado: (" + str(self.client_address[0]) + " , " + str(self.client_address[1]) + ")")
                     print 'El cliente nos manda: ' + line
                     self.wfile.write("SIP/2.0 200 OK" + '\r\n')
-                    self.register2file(str(Nick[1]),str(self.client_address[0]),1)
+                    self.register2file(str(Nick[1]),str(self.client_address[0]),expire,Dic_clients)
                     
                 if lista[2] == "0":
 
                     print ("Cliente dado de baja: (" + str(self.client_address[0]) + " , " + str(self.client_address[1]) + ")")  
                     del Dic_clients[Nick[1]]
                     self.wfile.write("SIP/2.0 200 OK" + '\r\n')
-                    self.register2file(str(Nick[1]),str(self.client_address[0]),0)              
+                    self.register2file(str(Nick[1]),str(self.client_address[0]),expire,Dic_clients)
+             
+                else:
+                    
+                    now= time.time()
+
+                    if Dic_clients[Nick[1]][1] <= now:
+
+                        print ("Cliente dado de baja: (" + str(self.client_address[0]) + " , " + str(self.client_address[1]) + ")")  
+                        del Dic_clients[Nick[1]]
+                        self.wfile.write("SIP/2.0 200 OK" + '\r\n')
+             
+             
+             
             if not line:
 
                 break

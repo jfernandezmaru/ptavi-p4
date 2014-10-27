@@ -15,6 +15,19 @@ SERVER = sys.argv[1]
 PORT = int(sys.argv[2])
 REGISTER= sys.argv[3].upper()
 EXPIRES = int(sys.argv[5])
+try:
+
+    SERVER = sys.argv[1]
+    PORT = int(sys.argv[2])
+    REGISTER= sys.argv[3].upper()
+    EXPIRES = int(sys.argv[5])
+    try:
+        EXPIRES < 0
+    except ValueError:
+        print "Usage: client.py ip puerto register sip_address expires_value"
+
+except ValueError:
+    print "Usage: client.py ip puerto register sip_address expires_value"
 
 # Contenido que vamos a enviar
 LINE = sys.argv[4:]
