@@ -7,15 +7,12 @@ Programa cliente que abre un socket a un servidor
 import socket
 import sys
 
-# Cliente UDP simple.
-
-# Dirección IP del servidor.
-#SERVER = 'localhost'
-SERVER = sys.argv[1]
-PORT = int(sys.argv[2])
-REGISTER= sys.argv[3].upper()
-EXPIRES = int(sys.argv[5])
 try:
+
+    """
+    Intentamos construir el Cliente UDP simple y Dirección IP del servidor cerciorándonos previamente
+    de que el EXPIRES es mayor o igual a cero y que está escrita correctamente la palabra register
+    """
 
     SERVER = sys.argv[1]
     PORT = int(sys.argv[2])
@@ -23,6 +20,8 @@ try:
     EXPIRES = int(sys.argv[5])
     if EXPIRES < 0:
         sys.exit( "Usage: expires_value need to be at least 0")
+    elif REGISTER != "REGISTER":
+        sys.exit( "Usage: register is needed")
 
 except ValueError:
     print "Usage: client.py ip puerto register sip_address expires_value"
@@ -40,7 +39,7 @@ print "Enviando: " + LINE
 my_socket.send(REGISTER + ' sip:' + LINE + ' SIP/2.0' + '\r\n''\r\n')
 data = my_socket.recv(1024)
 
-print 'Recibido -- ', data
+print "Recibido -- ", data
 print "Terminando socket..."
 
 # Cerramos todo
