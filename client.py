@@ -21,10 +21,8 @@ try:
     PORT = int(sys.argv[2])
     REGISTER= sys.argv[3].upper()
     EXPIRES = int(sys.argv[5])
-    try:
-        EXPIRES < 0
-    except ValueError:
-        print "Usage: client.py ip puerto register sip_address expires_value"
+    if EXPIRES < 0:
+        sys.exit( "Usage: expires_value need to be at least 0")
 
 except ValueError:
     print "Usage: client.py ip puerto register sip_address expires_value"
