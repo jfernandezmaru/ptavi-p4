@@ -54,12 +54,12 @@ class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
                 if lista[0] == "REGISTER":
                     now = time.time()
                     Nick = lista[1].split(":")
-                    expire = time.time() + int(lista[2])
+                    expire = time.time() + int(lista[3])
                     self.register2file(Dic_clients)
                     Dic_clients[Nick[1]] = (self.client_address[0], expire)
                     # Si expire = 0 damos de baja al cliente y actualizamos
                     # el diccionario de clientes y con ello el fichero
-                    if lista[2] == '0':
+                    if lista[3] == '0':
                         print "Cliente dado de baja: (",
                         print str(self.client_address[0]),
                         print " , " + str(self.client_address[1]) + ")"
